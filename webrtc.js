@@ -35,8 +35,7 @@ async function secureConfigurationPromise() {
 	return myConfiguration;
 }
 
-//let configuration = secureConfigurationPromise();
-let configuration = {iceServers: [{urls: 'stun:stun.l.google.com:19302'}]};
+let configuration = secureConfigurationPromise();
 
 function post(path, data) {
 	return new Promise((resolve, reject) => {
@@ -59,8 +58,8 @@ function waitForCandidates(peerConnection) {
 		if (peerConnection.iceGatheringState == 'complete')
 			resolve();
 		else {
-			peerConnection.addEventListener('icegatheringstatechange', () =>{
-				if (peerConnection.iceGatheringState == 'complete')
+			peerConnection.addEventListener('icecandidate', event =>{
+				if (event.candidate == null)
 					resolve();
 			});
 		}
