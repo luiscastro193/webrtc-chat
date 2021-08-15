@@ -1,11 +1,42 @@
 "use strict";
 const basePath = "https://webrtc-signals.herokuapp.com/";
-const configuration = {iceServers: [{urls: 'stun:stun.l.google.com:19302'}]};
 const timeout = 30 * 1000;
 
 function pause(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+async function petitionErrorHandler(error) {
+	await pause(1500);
+	return null;
+}
+
+function configurationPromise() {
+	return new Promise((resolve, reject) => {
+		let request = new XMLHttpRequest();
+		request.open('GET', basePath + 'servers');
+		request.responseType = "json";
+		request.onload = () => {
+			if (request.status < 400)
+				resolve({iceServers: request.response});
+			else
+				reject(request.statusText);
+		};
+		request.onerror = () => reject(request.statusText);
+		request.send();
+	});
+}
+
+async function secureConfigurationPromise() {
+	let myConfiguration;
+	
+	while (!myConfiguration)
+		myConfiguration = await configurationPromise().catch(petitionErrorHandler);
+	
+	return myConfiguration;
+}
+
+let configuration = secureConfigurationPromise();
 
 function post(path, data) {
 	return new Promise((resolve, reject) => {
@@ -21,11 +52,6 @@ function post(path, data) {
 		request.onerror = () => reject(request.statusText);
 		request.send(JSON.stringify(data));
 	});
-}
-
-async function petitionErrorHandler(error) {
-	await pause(1500);
-	return null;
 }
 
 function waitForCandidates(peerConnection) {
@@ -107,7 +133,7 @@ async function host(room) {
 	while (!petition)
 		petition = await post('host-room', {room}).catch(petitionErrorHandler);
 	
-	let peerConnection = new RTCPeerConnection(configuration);
+	let peerConnection = new RTCPeerConnection(await configuration);
 	peerConnection.setRemoteDescription(new RTCSessionDescription(petition.offer));
 	peerConnection.setLocalDescription(await peerConnection.createAnswer());
 	await waitForCandidates(peerConnection);
@@ -117,7 +143,7 @@ async function host(room) {
 }
 
 async function connect(room, user) {
-	let peerConnection = new RTCPeerConnection(configuration);
+	let peerConnection = new RTCPeerConnection(await configuration);
 	let dataChannel = peerConnection.createDataChannel('data');
 	peerConnection.setLocalDescription(await peerConnection.createOffer());
 	let answer = null;
