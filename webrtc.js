@@ -76,6 +76,7 @@ function waitForDataChannel(peerConnection) {
 		else {
 			peerConnection.addEventListener('connectionstatechange', () => {
 				if (peerConnection.connectionState == 'failed' || peerConnection.connectionState == 'closed')
+					peerConnection.close();
 					reject();
 			});
 		}
