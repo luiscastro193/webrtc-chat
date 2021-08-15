@@ -109,6 +109,7 @@ function waitForLocalDataChannel(peerConnection, dataChannel) {
 		else {
 			peerConnection.addEventListener('connectionstatechange', () => {
 				if (peerConnection.connectionState == 'failed' || peerConnection.connectionState == 'closed')
+					peerConnection.close();
 					reject();
 			});
 		}
@@ -127,12 +128,6 @@ function waitForLocalDataChannel(peerConnection, dataChannel) {
 	});
 }
 
-function alertRenegotiation(peerConnection) {
-	peerConnection.addEventListener('connectionstatechange', () =>{
-		alert(peerConnection.connectionState);
-	});
-}
-
 async function host(room) {
 	let petition = null;
 	
@@ -145,9 +140,7 @@ async function host(room) {
 	await waitForCandidates(peerConnection);
 	let dataChannelPromise = waitForDataChannel(peerConnection);
 	await post('answer', {room, user: petition.user, answer: peerConnection.localDescription});
-	let dataChannel = await dataChannelPromise;
-	alertRenegotiation(peerConnection);
-	return [petition.user, dataChannel];
+	return [petition.user, await dataChannelPromise];
 }
 
 async function connect(room, user) {
@@ -163,7 +156,5 @@ async function connect(room, user) {
 	
 	let dataChannelPromise = waitForLocalDataChannel(peerConnection, dataChannel);
 	peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-	await dataChannelPromise;
-	alertRenegotiation(peerConnection);
-	return dataChannel;
+	return await dataChannelPromise;
 }
