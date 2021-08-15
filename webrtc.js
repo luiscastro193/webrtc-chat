@@ -75,9 +75,10 @@ function waitForDataChannel(peerConnection) {
 			return reject();
 		else {
 			peerConnection.addEventListener('connectionstatechange', () => {
-				if (peerConnection.connectionState == 'failed' || peerConnection.connectionState == 'closed')
+				if (peerConnection.connectionState == 'failed' || peerConnection.connectionState == 'closed') {
 					peerConnection.close();
 					reject();
+				}
 			});
 		}
 		
@@ -109,9 +110,10 @@ function waitForLocalDataChannel(peerConnection, dataChannel) {
 			return reject();
 		else {
 			peerConnection.addEventListener('connectionstatechange', () => {
-				if (peerConnection.connectionState == 'failed' || peerConnection.connectionState == 'closed')
+				if (peerConnection.connectionState == 'failed' || peerConnection.connectionState == 'closed') {
 					peerConnection.close();
 					reject();
+				}
 			});
 		}
 		
