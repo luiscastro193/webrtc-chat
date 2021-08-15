@@ -127,6 +127,13 @@ function waitForLocalDataChannel(peerConnection, dataChannel) {
 	});
 }
 
+function alertRenegotiation(peerConnection) {
+	peerConnection.addEventListener('icegatheringstatechange', () =>{
+		if (peerConnection.iceGatheringState == 'complete')
+			alert("Renegotiation needed");
+	});
+}
+
 async function host(room) {
 	let petition = null;
 	
@@ -139,7 +146,9 @@ async function host(room) {
 	await waitForCandidates(peerConnection);
 	let dataChannelPromise = waitForDataChannel(peerConnection);
 	await post('answer', {room, user: petition.user, answer: peerConnection.localDescription});
-	return [petition.user, await dataChannelPromise];
+	let dataChannel = await dataChannelPromise;
+	alertRenegotiation(peerConnection);
+	return [petition.user, dataChannel];
 }
 
 async function connect(room, user) {
@@ -155,5 +164,7 @@ async function connect(room, user) {
 	
 	let dataChannelPromise = waitForLocalDataChannel(peerConnection, dataChannel);
 	peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-	return await dataChannelPromise;
+	await dataChannelPromise;
+	alertRenegotiation(peerConnection);
+	return dataChannel;
 }
