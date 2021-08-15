@@ -1,8 +1,5 @@
 "use strict";
 const basePath = "https://webrtc-signals.herokuapp.com/";
-const timeout = 30 * 1000;
-
-alert("prueba");
 
 function pause(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
@@ -71,8 +68,6 @@ function waitForCandidates(peerConnection) {
 
 function waitForDataChannel(peerConnection) {
 	return new Promise((resolve, reject) => {
-		let isResolved = false;
-		
 		if (peerConnection.connectionState == 'failed' || peerConnection.connectionState == 'closed')
 			return reject();
 		else {
@@ -85,32 +80,16 @@ function waitForDataChannel(peerConnection) {
 		}
 		
 		peerConnection.addEventListener('datachannel', event => {
-			if (event.channel.readyState == 'open') {
-				isResolved = true;
+			if (event.channel.readyState == 'open')
 				resolve(event.channel);
-			}
-			else {
-				event.channel.addEventListener('open', () => {
-					isResolved = true;
-					resolve(event.channel)
-				});
-			}
+			else
+				event.channel.addEventListener('open', () => resolve(event.channel));
 		});
-		
-		setTimeout(() => {
-			if (!isResolved) {
-				alert("timeout");
-				peerConnection.close();
-				reject();
-			}
-		}, timeout);
 	});
 }
 
 function waitForLocalDataChannel(peerConnection, dataChannel) {
 	return new Promise((resolve, reject) => {
-		let isResolved = false;
-		
 		if (peerConnection.connectionState == 'failed' || peerConnection.connectionState == 'closed')
 			return reject();
 		else {
@@ -123,23 +102,9 @@ function waitForLocalDataChannel(peerConnection, dataChannel) {
 		}
 		
 		if (dataChannel.readyState == 'open') {
-			isResolved = true;
 			resolve(dataChannel);
-		}
-		else {
-			dataChannel.addEventListener('open', () => {
-				isResolved = true;
-				resolve(dataChannel)
-			});
-		}
-			
-		setTimeout(() => {
-			if (!isResolved) {
-				alert("timeout");
-				peerConnection.close();
-				reject();
-			}
-		}, timeout);
+		else
+			dataChannel.addEventListener('open', () => resolve(dataChannel));
 	});
 }
 
@@ -152,8 +117,8 @@ async function host(room) {
 	let peerConnection = new RTCPeerConnection(await configuration);
 	peerConnection.setRemoteDescription(new RTCSessionDescription(petition.offer));
 	peerConnection.setLocalDescription(await peerConnection.createAnswer());
-	await waitForCandidates(peerConnection);
 	let dataChannelPromise = waitForDataChannel(peerConnection);
+	await waitForCandidates(peerConnection);
 	await post('answer', {room, user: petition.user, answer: peerConnection.localDescription});
 	return [petition.user, await dataChannelPromise];
 }
