@@ -1,7 +1,7 @@
 "use strict";
 const basePath = "https://webrtc-signals.herokuapp.com/";
 
-alert("Debugging");
+alert("Debugging 2");
 
 function pause(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
@@ -57,10 +57,12 @@ function post(path, data) {
 
 function waitForCandidates(peerConnection) {
 	return new Promise(resolve => {
+		alert(peerConnection.iceGatheringState);
 		if (peerConnection.iceGatheringState == 'complete')
 			resolve();
 		else {
 			peerConnection.addEventListener('icegatheringstatechange', () =>{
+				alert(peerConnection.iceGatheringState);
 				if (peerConnection.iceGatheringState == 'complete')
 					resolve();
 			});
