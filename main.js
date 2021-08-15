@@ -94,6 +94,7 @@ async function connectToRoom() {
 	joinButton.disabled = true;
 	
 	const code = await getCode();
+	await setName();
 	info.textContent = `Connecting to room ${code}...`;
 	try {
 		myChannel = await connect(code, myName);
