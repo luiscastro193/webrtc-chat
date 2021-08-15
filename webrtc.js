@@ -1,7 +1,7 @@
 "use strict";
 const basePath = "https://webrtc-signals.herokuapp.com/";
 const configuration = {iceServers: [{urls: 'stun:stun.l.google.com:19302'}]};
-const timeout = 30 * 1000;
+const timeout = 300 * 1000;
 
 function pause(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
