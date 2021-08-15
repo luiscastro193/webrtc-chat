@@ -43,6 +43,7 @@ function addMessage(msg) {
 	let li = document.createElement("li");
 	li.textContent = msg;
 	messages.appendChild(li);
+	messageForm.scrollIntoView();
 }
 
 function sendMessage(msg) {
@@ -93,7 +94,6 @@ async function connectToRoom() {
 	joinButton.disabled = true;
 	
 	const code = await getCode();
-	await setName();
 	info.textContent = `Connecting to room ${code}...`;
 	try {
 		myChannel = await connect(code, myName);

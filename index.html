@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<title>WebRTC chat</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="favicon.svg" type="image/svg+xml">
 	<link href="https://fonts.googleapis.com/css2?family=Lexend+Deca&display=swap" rel="stylesheet">
 	<script src="webrtc.js" defer></script>
 	<script src="main.js" defer></script>
@@ -27,7 +28,7 @@
 	<form id="room-form" autocomplete="off" hidden>
 		<br>
 		<label>Enter the room code:
-			<input name="code" type="text" onmouseenter="this.focus()" required>
+			<input name="code" type="number" onmouseenter="this.focus()" required>
 		</label>
 		<input type="submit" value="Send">
 	</form>
