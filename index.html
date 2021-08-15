@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>WebRTC chat</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://fonts.googleapis.com/css2?family=Lexend+Deca&display=swap" rel="stylesheet">
+	<script src="webrtc.js" defer></script>
+	<script src="main.js" defer></script>
+	<style>
+		* {
+			font-family: 'Lexend Deca', sans-serif;
+		}
+	</style>
+</head>
+<body>
+	<h3>WebRTC chat</h3>
+	<button id="create-button" disabled>Create room</button>
+	<button id="join-button" disabled>Join room</button>
+	<form id="name-form" autocomplete="off" hidden>
+		<br>
+		<label>Enter your name:
+			<input name="name" type="text" onmouseenter="this.focus()" required>
+		</label>
+		<input type="submit" value="Send">
+	</form>
+	<form id="room-form" autocomplete="off" hidden>
+		<br>
+		<label>Enter the room code:
+			<input name="code" type="text" onmouseenter="this.focus()" required>
+		</label>
+		<input type="submit" value="Send">
+	</form>
+	<p id="info"></p>
+	<ul id="messages"></ul>
+	<form id="message-form" autocomplete="off" hidden>
+		<input name="message" type="text" onmouseenter="this.focus()" required>
+		<input type="submit" value="Send">
+	</form>
+</body>
+</html>
