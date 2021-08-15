@@ -116,7 +116,7 @@ async function host(room) {
 		petition = await post('host-room', {room}).catch(petitionErrorHandler);
 	
 	let peerConnection = new RTCPeerConnection(await configuration);
-	peerConnection.setRemoteDescription(new RTCSessionDescription(petition.offer));
+	await peerConnection.setRemoteDescription(new RTCSessionDescription(petition.offer));
 	peerConnection.setLocalDescription(await peerConnection.createAnswer());
 	let dataChannelPromise = waitForDataChannel(peerConnection);
 	await waitForCandidates(peerConnection);
