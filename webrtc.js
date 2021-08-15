@@ -1,6 +1,8 @@
 "use strict";
 const basePath = "https://webrtc-signals.herokuapp.com/";
 
+alert("Debugging");
+
 function pause(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -117,9 +119,13 @@ async function host(room) {
 	let peerConnection = new RTCPeerConnection(await configuration);
 	peerConnection.setRemoteDescription(new RTCSessionDescription(petition.offer));
 	peerConnection.setLocalDescription(await peerConnection.createAnswer());
+	alert("Stop 1");
 	let dataChannelPromise = waitForDataChannel(peerConnection);
+	alert("Stop 2");
 	await waitForCandidates(peerConnection);
+	alert("Stop 3");
 	await post('answer', {room, user: petition.user, answer: peerConnection.localDescription});
+	alert("Stop 4");
 	return [petition.user, await dataChannelPromise];
 }
 
