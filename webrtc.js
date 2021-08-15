@@ -97,6 +97,7 @@ function waitForDataChannel(peerConnection) {
 		
 		setTimeout(() => {
 			if (!isResolved) {
+				alert("timeout");
 				peerConnection.close();
 				reject();
 			}
@@ -132,6 +133,7 @@ function waitForLocalDataChannel(peerConnection, dataChannel) {
 			
 		setTimeout(() => {
 			if (!isResolved) {
+				alert("timeout");
 				peerConnection.close();
 				reject();
 			}
