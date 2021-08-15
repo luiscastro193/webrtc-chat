@@ -101,7 +101,7 @@ function waitForLocalDataChannel(peerConnection, dataChannel) {
 			});
 		}
 		
-		if (dataChannel.readyState == 'open') {
+		if (dataChannel.readyState == 'open')
 			resolve(dataChannel);
 		else
 			dataChannel.addEventListener('open', () => resolve(dataChannel));
