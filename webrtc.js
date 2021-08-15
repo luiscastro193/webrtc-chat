@@ -106,6 +106,8 @@ function waitForDataChannel(peerConnection) {
 
 function waitForLocalDataChannel(peerConnection, dataChannel) {
 	return new Promise((resolve, reject) => {
+		let isResolved = false;
+		
 		if (peerConnection.connectionState == 'failed' || peerConnection.connectionState == 'closed')
 			return reject();
 		else {
@@ -117,13 +119,19 @@ function waitForLocalDataChannel(peerConnection, dataChannel) {
 			});
 		}
 		
-		if (dataChannel.readyState == 'open')
+		if (dataChannel.readyState == 'open') {
+			isResolved = true;
 			resolve(dataChannel);
-		else
-			dataChannel.addEventListener('open', () => resolve(dataChannel));
-		
+		}
+		else {
+			dataChannel.addEventListener('open', () => {
+				isResolved = true;
+				resolve(dataChannel)
+			});
+		}
+			
 		setTimeout(() => {
-			if (dataChannel.readyState != 'open') {
+			if (!isResolved) {
 				peerConnection.close();
 				reject();
 			}
