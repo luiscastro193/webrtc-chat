@@ -58,11 +58,13 @@ function waitForCandidates(peerConnection) {
 		if (peerConnection.iceGatheringState == 'complete')
 			resolve();
 		else {
-			peerConnection.addEventListener('icecandidate', event =>{
-				if (event.candidate == null)
+			peerConnection.addEventListener('icegatheringstatechange', () =>{
+				if (peerConnection.iceGatheringState == 'complete')
 					resolve();
 			});
 		}
+		
+		setTimeout(() => resolve(), 10000);
 	});
 }
 
