@@ -128,9 +128,8 @@ function waitForLocalDataChannel(peerConnection, dataChannel) {
 }
 
 function alertRenegotiation(peerConnection) {
-	peerConnection.addEventListener('icegatheringstatechange', () =>{
-		if (peerConnection.iceGatheringState == 'complete')
-			alert("Renegotiation needed");
+	peerConnection.addEventListener('negotiationneeded', () =>{
+		alert("Renegotiation needed");
 	});
 }
 
