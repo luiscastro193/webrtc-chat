@@ -128,8 +128,8 @@ function waitForLocalDataChannel(peerConnection, dataChannel) {
 }
 
 function alertRenegotiation(peerConnection) {
-	peerConnection.addEventListener('negotiationneeded', () =>{
-		alert("Renegotiation needed");
+	peerConnection.addEventListener('connectionstatechange', () =>{
+		alert(peerConnection.connectionState);
 	});
 }
 
