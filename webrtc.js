@@ -2,6 +2,8 @@
 const basePath = "https://webrtc-signals.herokuapp.com/";
 const timeout = 30 * 1000;
 
+alert("prueba");
+
 function pause(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
