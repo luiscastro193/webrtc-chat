@@ -79,9 +79,11 @@ async function setAsHost() {
 		
 		let oldChannel = hostChannels.get(user);
 		
-		if (oldChannel)
+		if (oldChannel) {
 			oldChannel.close();
-		
+			await new Promise(resolve => setTimeout(resolve, 0));
+		}
+			
 		addMessage(`${user} has connected`);
 		hostChannels.set(user, channel);
 		
