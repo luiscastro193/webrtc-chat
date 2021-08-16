@@ -76,7 +76,6 @@ async function setAsHost() {
 	
 	while (true) { try {
 		let [user, channel] = await host(code);
-		
 		let oldChannel = hostChannels.get(user);
 		
 		if (oldChannel) {
@@ -86,7 +85,6 @@ async function setAsHost() {
 			
 		addMessage(`${user} has connected`);
 		hostChannels.set(user, channel);
-		
 		channel.addEventListener('message', event => addMessage(`${user}: ${event.data}`));
 		
 		channel.addEventListener('close', () => {
