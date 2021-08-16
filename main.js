@@ -91,7 +91,7 @@ async function setAsHost() {
 			hostChannels.delete(user);
 			addMessage(`${user} has disconnected`);
 		});
-	} catch (e) {}}
+	} catch (e) {console.error(e);}}
 }
 
 async function connectToRoom() {
