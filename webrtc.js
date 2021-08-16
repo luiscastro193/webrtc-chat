@@ -2,13 +2,8 @@
 const basePath = "https://webrtc-signals.herokuapp.com/";
 const timeout = 10 * 1000;
 
-function pause(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function petitionErrorHandler(error) {
-	await pause(1500);
-	return null;
+function petitionErrorHandler(error) {
+	return new Promise(resolve => setTimeout(() => resolve(null), 1500));
 }
 
 function configurationPromise() {
