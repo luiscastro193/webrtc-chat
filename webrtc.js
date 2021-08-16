@@ -161,5 +161,5 @@ async function connect(room, user) {
 	
 	let dataChannelPromise = waitForLocalDataChannel(peerConnection, dataChannel);
 	await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-	return await dataChannelPromise;
+	return dataChannelPromise;
 }
