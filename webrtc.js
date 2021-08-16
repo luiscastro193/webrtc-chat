@@ -1,5 +1,6 @@
 "use strict";
 const basePath = "https://webrtc-signals.herokuapp.com/";
+const timeout = 30 * 1000;
 
 function pause(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
@@ -70,6 +71,8 @@ function waitForCandidates(peerConnection) {
 
 function waitForDataChannel(peerConnection) {
 	return new Promise((resolve, reject) => {
+		let isResolved = false;
+		
 		if (peerConnection.connectionState == 'failed' || peerConnection.connectionState == 'closed')
 			return reject();
 		else {
@@ -82,11 +85,24 @@ function waitForDataChannel(peerConnection) {
 		}
 		
 		peerConnection.addEventListener('datachannel', event => {
-			if (event.channel.readyState == 'open')
+			if (event.channel.readyState == 'open') {
+				isResolved = true;
 				resolve(event.channel);
-			else
-				event.channel.addEventListener('open', () => resolve(event.channel));
+			}
+			else {
+				event.channel.addEventListener('open', () => {
+					isResolved = true;
+					resolve(event.channel)
+				});
+			}
 		});
+		
+		setTimeout(() => {
+			if (!isResolved) {
+				peerConnection.close();
+				reject();
+			}
+		}, timeout);
 	});
 }
 
@@ -107,6 +123,13 @@ function waitForLocalDataChannel(peerConnection, dataChannel) {
 			resolve(dataChannel);
 		else
 			dataChannel.addEventListener('open', () => resolve(dataChannel));
+		
+		setTimeout(() => {
+			if (dataChannel.readyState != 'open') {
+				peerConnection.close();
+				reject();
+			}
+		}, timeout);
 	});
 }
 
@@ -119,8 +142,8 @@ async function host(room) {
 	let peerConnection = new RTCPeerConnection(await configuration);
 	await peerConnection.setRemoteDescription(new RTCSessionDescription(petition.offer));
 	await peerConnection.setLocalDescription(await peerConnection.createAnswer());
-	let dataChannelPromise = waitForDataChannel(peerConnection);
 	await waitForCandidates(peerConnection);
+	let dataChannelPromise = waitForDataChannel(peerConnection);
 	await post('answer', {room, user: petition.user, answer: peerConnection.localDescription});
 	return [petition.user, await dataChannelPromise];
 }
