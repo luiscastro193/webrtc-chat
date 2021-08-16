@@ -1,5 +1,6 @@
 "use strict";
 const basePath = "https://webrtc-signals.herokuapp.com/";
+const timeout = 10 * 1000;
 
 function pause(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
@@ -64,7 +65,7 @@ function waitForCandidates(peerConnection) {
 			});
 		}
 		
-		setTimeout(() => resolve(), 10000);
+		setTimeout(() => resolve(), timeout);
 	});
 }
 
@@ -101,7 +102,7 @@ function waitForDataChannel(peerConnection) {
 				peerConnection.close();
 				reject();
 			}
-		}, 20000);
+		}, timeout);
 	});
 }
 
@@ -128,7 +129,7 @@ function waitForLocalDataChannel(peerConnection, dataChannel) {
 				peerConnection.close();
 				reject();
 			}
-		}, 20000);
+		}, timeout);
 	});
 }
 
