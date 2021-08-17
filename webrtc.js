@@ -68,14 +68,13 @@ function waitForDataChannel(peerConnection, dataChannel) {
 	return new Promise((resolve, reject) => {
 		if (peerConnection.connectionState == 'failed' || peerConnection.connectionState == 'closed')
 			return reject();
-		else {
-			peerConnection.addEventListener('connectionstatechange', () => {
-				if (peerConnection.connectionState == 'failed' || peerConnection.connectionState == 'closed') {
-					peerConnection.close();
-					reject();
-				}
-			});
-		}
+		
+		peerConnection.addEventListener('connectionstatechange', () => {
+			if (peerConnection.connectionState == 'failed' || peerConnection.connectionState == 'closed') {
+				peerConnection.close();
+				reject();
+			}
+		});
 		
 		if (dataChannel.readyState == 'open')
 			resolve(dataChannel);
