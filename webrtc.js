@@ -52,13 +52,12 @@ function post(path, data) {
 function waitForCandidates(peerConnection) {
 	return new Promise(resolve => {
 		if (peerConnection.iceGatheringState == 'complete')
-			resolve();
-		else {
-			peerConnection.addEventListener('icegatheringstatechange', () =>{
-				if (peerConnection.iceGatheringState == 'complete')
-					resolve();
-			});
-		}
+			return resolve();
+		
+		peerConnection.addEventListener('icegatheringstatechange', () =>{
+			if (peerConnection.iceGatheringState == 'complete')
+				resolve();
+		});
 		
 		setTimeout(() => resolve(), timeout);
 	});
