@@ -31,7 +31,7 @@ async function secureConfigurationPromise() {
 	return myConfiguration;
 }
 
-let configuration = secureConfigurationPromise();
+const configuration = secureConfigurationPromise();
 
 function post(path, data) {
 	return new Promise((resolve, reject) => {
