@@ -64,44 +64,7 @@ function waitForCandidates(peerConnection) {
 	});
 }
 
-function waitForDataChannel(peerConnection) {
-	return new Promise((resolve, reject) => {
-		let isResolved = false;
-		
-		if (peerConnection.connectionState == 'failed' || peerConnection.connectionState == 'closed')
-			return reject();
-		else {
-			peerConnection.addEventListener('connectionstatechange', () => {
-				if (peerConnection.connectionState == 'failed' || peerConnection.connectionState == 'closed') {
-					peerConnection.close();
-					reject();
-				}
-			});
-		}
-		
-		peerConnection.addEventListener('datachannel', event => {
-			if (event.channel.readyState == 'open') {
-				isResolved = true;
-				resolve(event.channel);
-			}
-			else {
-				event.channel.addEventListener('open', () => {
-					isResolved = true;
-					resolve(event.channel)
-				});
-			}
-		});
-		
-		setTimeout(() => {
-			if (!isResolved) {
-				peerConnection.close();
-				reject();
-			}
-		}, timeout);
-	});
-}
-
-function waitForLocalDataChannel(peerConnection, dataChannel) {
+function waitForDataChannel(peerConnection, dataChannel) {
 	return new Promise((resolve, reject) => {
 		if (peerConnection.connectionState == 'failed' || peerConnection.connectionState == 'closed')
 			return reject();
@@ -135,17 +98,17 @@ async function host(room) {
 		petition = await post('host-room', {room}).catch(petitionErrorHandler);
 	
 	let peerConnection = new RTCPeerConnection(await configuration);
+	let dataChannel = peerConnection.createDataChannel('data', {negotiated: true, id: 0});
 	await peerConnection.setRemoteDescription(new RTCSessionDescription(petition.offer));
 	await peerConnection.setLocalDescription(await peerConnection.createAnswer());
 	await waitForCandidates(peerConnection);
-	let dataChannelPromise = waitForDataChannel(peerConnection);
 	await post('answer', {room, user: petition.user, answer: peerConnection.localDescription});
-	return [petition.user, await dataChannelPromise];
+	return [petition.user, await waitForDataChannel(peerConnection, dataChannel)];
 }
 
 async function connect(room, user) {
 	let peerConnection = new RTCPeerConnection(await configuration);
-	let dataChannel = peerConnection.createDataChannel('data');
+	let dataChannel = peerConnection.createDataChannel('data', {negotiated: true, id: 0});
 	await peerConnection.setLocalDescription(await peerConnection.createOffer());
 	let answer = null;
 			
@@ -154,7 +117,6 @@ async function connect(room, user) {
 		answer = await post('connect', {room, user, offer: peerConnection.localDescription}).catch(petitionErrorHandler);
 	}
 	
-	let dataChannelPromise = waitForLocalDataChannel(peerConnection, dataChannel);
-	await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-	return dataChannelPromise;
+	peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+	return waitForDataChannel(peerConnection, dataChannel);
 }
