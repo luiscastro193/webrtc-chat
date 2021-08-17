@@ -76,9 +76,9 @@ function waitForDataChannel(peerConnection, dataChannel) {
 		});
 		
 		if (dataChannel.readyState == 'open')
-			resolve(dataChannel);
-		else
-			dataChannel.addEventListener('open', () => resolve(dataChannel));
+			return resolve(dataChannel);
+		
+		dataChannel.addEventListener('open', () => resolve(dataChannel));
 		
 		setTimeout(() => {
 			if (dataChannel.readyState != 'open') {
