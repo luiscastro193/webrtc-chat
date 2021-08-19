@@ -28,7 +28,7 @@
 	<form id="room-form" autocomplete="off" hidden>
 		<br>
 		<label>Enter the room code:
-			<input name="code" type="number" onmouseenter="this.focus()" required>
+			<input name="code" type="number" min="0" max="9999" onmouseenter="this.focus()" required>
 		</label>
 		<input type="submit" value="Send">
 	</form>
