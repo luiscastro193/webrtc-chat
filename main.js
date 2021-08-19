@@ -29,7 +29,7 @@ function getCode() {
 		roomForm.onsubmit = event => {
 			event.preventDefault();
 			roomForm.hidden = true;
-			resolve(roomForm.elements['code'].value.padStart(4, '0'));
+			resolve(roomForm.elements['code'].value);
 		};
 		
 		roomForm.hidden = false;
