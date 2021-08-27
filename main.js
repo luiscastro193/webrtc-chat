@@ -21,6 +21,7 @@ function setName() {
 		};
 		
 		nameForm.hidden = false;
+		nameForm.elements['name'].focus();
 	});
 }
 
@@ -33,6 +34,7 @@ function getCode() {
 		};
 		
 		roomForm.hidden = false;
+		roomForm.elements['code'].focus();
 	});
 }
 
