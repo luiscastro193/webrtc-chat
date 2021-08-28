@@ -1,6 +1,6 @@
 "use strict";
 const basePath = "https://webrtc-signals.herokuapp.com/";
-const timeout = 10 * 1000;
+const timeout = 5 * 1000;
 
 function petitionErrorHandler(error) {
 	return new Promise(resolve => setTimeout(() => resolve(null), 1500));
