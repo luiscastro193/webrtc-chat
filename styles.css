@@ -13,7 +13,7 @@
 	justify-content: flex-start;
 	align-items: flex-start;
 	width: 100%;
-	max-width: 20em;
+	max-width: 25em;
 }
 
 #message-form > [name=message] {
