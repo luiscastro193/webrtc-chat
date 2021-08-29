@@ -1,0 +1,22 @@
+* {
+	font-family: 'Lexend', sans-serif;
+}
+
+#messages {
+	padding: 0px;
+	list-style-position: inside;
+}
+
+#message-form:not([hidden]) {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	align-items: flex-start;
+	width: 100%;
+	max-width: 20em;
+}
+
+#message-form > [name=message] {
+	margin: 0 0.3em 0.3em 0;
+	flex: 1;
+}
