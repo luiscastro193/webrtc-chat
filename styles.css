@@ -10,7 +10,6 @@
 #message-form:not([hidden]) {
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: flex-start;
 	align-items: flex-start;
 	max-width: 25em;
 }
