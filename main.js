@@ -63,6 +63,7 @@ function enableMessages() {
 	}
 	
 	messageForm.hidden = false;
+	messageForm.elements['message'].focus();
 }
 
 async function setAsHost() {
