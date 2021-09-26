@@ -54,7 +54,7 @@ function waitForCandidates(peerConnection) {
 		if (peerConnection.iceGatheringState == 'complete')
 			return resolve();
 		
-		peerConnection.addEventListener('icegatheringstatechange', () =>{
+		peerConnection.addEventListener('icegatheringstatechange', () => {
 			if (peerConnection.iceGatheringState == 'complete')
 				resolve();
 		});
