@@ -79,6 +79,10 @@ async function setAsHost() {
 	
 	while (true) { try {
 		let [user, channel] = await host(code);
+		
+		if (user == myName)
+			user += " 2";
+		
 		let oldChannel = hostChannels.get(user);
 		
 		if (oldChannel) {
