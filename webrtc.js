@@ -1,5 +1,5 @@
 "use strict";
-const basePath = "https://webrtc-signals.herokuapp.com/";
+const basePath = "https://luiscastro193.duckdns.org/webrtc-signals/";
 const timeout = 5 * 1000;
 
 function petitionErrorHandler(error) {
