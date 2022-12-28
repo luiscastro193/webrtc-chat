@@ -2,24 +2,17 @@
 const basePath = "https://luiscastro193.duckdns.org/webrtc-signals/";
 const timeout = 5 * 1000;
 
+function request(resource, options) {
+	return fetch(resource, options).then(response => {if (response.ok) return response; else throw response});
+}
+
 function petitionErrorHandler(error) {
 	return new Promise(resolve => setTimeout(() => resolve(null), 1500));
 }
 
-function configurationPromise() {
-	return new Promise((resolve, reject) => {
-		let request = new XMLHttpRequest();
-		request.open('GET', basePath + 'servers');
-		request.responseType = "json";
-		request.onload = () => {
-			if (request.status < 400)
-				resolve({iceServers: request.response});
-			else
-				reject(request.statusText);
-		};
-		request.onerror = () => reject(request.statusText);
-		request.send();
-	});
+async function configurationPromise() {
+	let servers = await request(basePath + 'servers').then(response => response.json());
+	return {iceServers: servers};
 }
 
 async function secureConfigurationPromise() {
@@ -34,19 +27,7 @@ async function secureConfigurationPromise() {
 const configuration = secureConfigurationPromise();
 
 function post(path, data) {
-	return new Promise((resolve, reject) => {
-		let request = new XMLHttpRequest();
-		request.open('POST', basePath + path);
-		request.responseType = "json";
-		request.onload = () => {
-			if (request.status < 400)
-				resolve(request.response);
-			else
-				reject(request.statusText);
-		};
-		request.onerror = () => reject(request.statusText);
-		request.send(JSON.stringify(data));
-	});
+	return request(basePath + path, {method: 'POST', body: JSON.stringify(data)}).then(response => response.json());
 }
 
 function waitForCandidates(peerConnection) {
