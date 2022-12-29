@@ -2,8 +2,9 @@
 const basePath = "https://luiscastro193.duckdns.org/webrtc-signals/";
 const timeout = 5 * 1000;
 
-function request(resource, options) {
-	return fetch(resource, options).then(response => {if (response.ok) return response; else throw response});
+async function request(resource, options) {
+	let response = await fetch(resource, options);
+	if (response.ok) return response; else throw response;
 }
 
 function petitionErrorHandler(error) {
@@ -11,8 +12,8 @@ function petitionErrorHandler(error) {
 }
 
 async function configurationPromise() {
-	let servers = await request(basePath + 'servers').then(response => response.json());
-	return {iceServers: servers};
+	let response = await request(basePath + 'servers');
+	return {iceServers: await response.json()};
 }
 
 async function secureConfigurationPromise() {
@@ -26,8 +27,9 @@ async function secureConfigurationPromise() {
 
 const configuration = secureConfigurationPromise();
 
-function post(path, data) {
-	return request(basePath + path, {method: 'POST', body: JSON.stringify(data)}).then(response => response.json());
+async function post(path, data) {
+	let response = await request(basePath + path, {method: 'POST', body: JSON.stringify(data)});
+	return response.json();
 }
 
 function waitForCandidates(peerConnection) {
