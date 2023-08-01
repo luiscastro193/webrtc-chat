@@ -8,7 +8,7 @@ async function request(resource, options) {
 }
 
 function petitionErrorHandler(error) {
-	return new Promise(resolve => setTimeout(() => resolve(null), 1500));
+	return new Promise(resolve => setTimeout(resolve, 1500));
 }
 
 async function configurationPromise() {
