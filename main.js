@@ -1,4 +1,6 @@
 "use strict";
+import {host, connect} from './webrtc.js';
+
 const createButton = document.getElementById('create-button');
 const joinButton = document.getElementById('join-button');
 const nameForm = document.getElementById('name-form');

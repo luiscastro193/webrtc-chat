@@ -72,7 +72,7 @@ function waitForDataChannel(peerConnection, dataChannel) {
 	});
 }
 
-async function host(room) {
+export async function host(room) {
 	let petition = null;
 	
 	while (!petition)
@@ -87,7 +87,7 @@ async function host(room) {
 	return [petition.user, await waitForDataChannel(peerConnection, dataChannel)];
 }
 
-async function connect(room, user) {
+export async function connect(room, user) {
 	let peerConnection = new RTCPeerConnection(await configuration);
 	let dataChannel = peerConnection.createDataChannel('data', {negotiated: true, id: 0});
 	await peerConnection.setLocalDescription(await peerConnection.createOffer());
