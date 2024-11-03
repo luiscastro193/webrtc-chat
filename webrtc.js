@@ -1,5 +1,5 @@
 "use strict";
-const basePath = "https://luiscastro193.duckdns.org/webrtc-signals/";
+const basePath = "https://luiscastro193.com/webrtc-signals/";
 const timeout = 5 * 1000;
 
 async function request(resource, options) {
