@@ -1,6 +1,6 @@
 "use strict";
 const basePath = "https://luiscastro193.com/webrtc-signals/";
-const timeout = 5 * 1000;
+const timeout = 3 * 1000;
 
 async function request(resource, options) {
 	let response = await fetch(resource, options);
@@ -8,7 +8,7 @@ async function request(resource, options) {
 }
 
 function petitionErrorHandler(error) {
-	return new Promise(resolve => setTimeout(resolve, 1500));
+	return new Promise(resolve => setTimeout(resolve, 1000));
 }
 
 async function configurationPromise() {
