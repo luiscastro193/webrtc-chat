@@ -37,8 +37,8 @@ function waitForCandidates(peerConnection) {
 		if (peerConnection.iceGatheringState == 'complete')
 			return resolve();
 		
-		peerConnection.addEventListener('icegatheringstatechange', () => {
-			if (peerConnection.iceGatheringState == 'complete')
+		peerConnection.addEventListener('icecandidate', event => {
+			if (!event.candidate)
 				resolve();
 		});
 		
@@ -79,24 +79,25 @@ export async function host(room) {
 		petition = await post('host-room', {room}).catch(petitionErrorHandler);
 	
 	let peerConnection = new RTCPeerConnection(await configuration);
+	let isReady = waitForCandidates(peerConnection);
 	let dataChannel = peerConnection.createDataChannel('data', {negotiated: true, id: 0});
 	await peerConnection.setRemoteDescription(new RTCSessionDescription(petition.offer));
 	await peerConnection.setLocalDescription(await peerConnection.createAnswer());
-	await waitForCandidates(peerConnection);
+	await isReady;
 	await post('answer', {room, user: petition.user, answer: peerConnection.localDescription});
 	return [petition.user, await waitForDataChannel(peerConnection, dataChannel)];
 }
 
 export async function connect(room, user) {
 	let peerConnection = new RTCPeerConnection(await configuration);
+	let isReady = waitForCandidates(peerConnection);
 	let dataChannel = peerConnection.createDataChannel('data', {negotiated: true, id: 0});
 	await peerConnection.setLocalDescription(await peerConnection.createOffer());
+	await isReady;
 	let answer = null;
 			
-	while (!answer) {
-		await waitForCandidates(peerConnection);
+	while (!answer)
 		answer = await post('connect', {room, user, offer: peerConnection.localDescription}).catch(petitionErrorHandler);
-	}
 	
 	peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
 	return waitForDataChannel(peerConnection, dataChannel);
