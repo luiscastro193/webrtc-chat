@@ -42,6 +42,11 @@ function waitForCandidates(peerConnection) {
 				resolve();
 		});
 		
+		peerConnection.addEventListener('icegatheringstatechange', () => {
+			if (peerConnection.iceGatheringState == 'complete')
+				resolve();
+		});
+		
 		setTimeout(() => resolve(), timeout);
 	});
 }
