@@ -52,14 +52,27 @@ async function waitForChannel(channel, peerConnection) {
 	return promise;
 }
 
+async function sendCandidate(candidate, id, targetId) {
+	const candidateId = crypto.randomUUID();
+	securePromise(() => post('candidate', {candidate: candidate, candidateId, id, targetId}));
+}
+
+let sendPromise = Promise.resolve();
+
 function sendCandidates(peerConnection, id, targetId) {
 	peerConnection.addEventListener('icecandidate', event => {
-		const candidateId = crypto.randomUUID();
-		securePromise(() => post('candidate', {candidate: event.candidate, candidateId, id, targetId}));
+		sendPromise = sendPromise.finally(() => sendCandidate(event.candidate, id, targetId));
 	});
 }
 
 class Candidates {
+	static finished(peerConnection) {
+		return peerConnection.iceConnectionState == 'completed' ||
+			peerConnection.iceConnectionState == 'closed' ||
+			peerConnection.remoteDescription?.sdp?.includes("a=end-of-candidates") ||
+			peerConnection.endOfCandidates;
+	}
+	
 	constructor(id) {
 		this.id = id;
 		this.connections = new Map();
@@ -73,7 +86,7 @@ class Candidates {
 	
 	checkActive() {
 		for (const [targetId, peerConnection] of this.connections.entries()) {
-			if (peerConnection.iceConnectionState == 'completed' || peerConnection.iceConnectionState == 'closed')
+			if (Candidates.finished(peerConnection))
 				this.connections.delete(targetId);
 		}
 		
@@ -85,8 +98,13 @@ class Candidates {
 			this.checkActive();
 			while (this.active) {
 				let response = await post('candidate-request', {id: this.id}).catch(petitionErrorHandler);
-				if (response)
-					this.connections.get(response.targetId)?.addIceCandidate(response.candidate);
+				if (response) {
+					let peerConnection = this.connections.get(response.targetId);
+					if (peerConnection) {
+						peerConnection.addIceCandidate(response.candidate);
+						if (!response.candidate?.candidate) peerConnection.endOfCandidates = true;
+					}
+				}
 				this.checkActive();
 			}
 		}
