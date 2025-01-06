@@ -1,6 +1,5 @@
 "use strict";
-const basePath = "http://localhost:5000/";
-//const basePath = "https://luiscastro193.com/webrtc-signals/"; TODO
+const basePath = "https://luiscastro193.com/webrtc-signals/";
 const timeout = 15 * 1000;
 
 async function request(resource, options) {
