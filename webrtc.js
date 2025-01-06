@@ -73,7 +73,7 @@ class Candidates {
 	
 	checkActive() {
 		for (const [targetId, peerConnection] of this.connections.entries()) {
-			if (peerConnection.connectionState == 'closed')
+			if (peerConnection.iceConnectionState == 'completed' || peerConnection.iceConnectionState == 'closed')
 				this.connections.delete(targetId);
 		}
 		
