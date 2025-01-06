@@ -54,7 +54,7 @@ async function waitForChannel(channel, peerConnection) {
 
 async function sendCandidate(candidate, id, targetId) {
 	const candidateId = crypto.randomUUID();
-	securePromise(() => post('candidate', {candidate: candidate, candidateId, id, targetId}));
+	return securePromise(() => post('candidate', {candidate: candidate, candidateId, id, targetId}));
 }
 
 let sendPromise = Promise.resolve();
