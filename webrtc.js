@@ -86,7 +86,7 @@ class Candidates {
 			while (this.active) {
 				let response = await post('candidate-request', {id: this.id}).catch(petitionErrorHandler);
 				if (response)
-					this.connections.get(response.targetId)?.addIceCandidate(new RTCIceCandidate(response.candidate));
+					this.connections.get(response.targetId)?.addIceCandidate(response.candidate);
 				this.checkActive();
 			}
 		}
