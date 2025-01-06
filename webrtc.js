@@ -119,11 +119,11 @@ export class Host {
 		this.queue = [];
 		this.eventTarget = new EventTarget();
 		this.event = new Event('e');
-		this.listening = true;
 		this.listen();
 	}
 	
 	async listen() {
+		this.listening = true;
 		while (this.listening) {
 			let petition = await post('petition-request', {room: this.room, id: this.id}).catch(petitionErrorHandler);
 			if (petition) this.handleConnection(petition);
