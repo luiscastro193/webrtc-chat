@@ -68,7 +68,7 @@ class Candidates {
 	
 	register(peerConnection, targetId) {
 		this.connections.set(targetId, peerConnection);
-		if (!this.active) this.activate();
+		this.activate();
 	}
 	
 	checkActive() {
@@ -81,12 +81,14 @@ class Candidates {
 	}
 	
 	async activate() {
-		this.checkActive();
-		while (this.active) {
-			let response = await post('candidate-request', {id: this.id}).catch(petitionErrorHandler);
-			if (response)
-				this.connections.get(response.targetId)?.addIceCandidate(new RTCIceCandidate(response.candidate));
+		if (!this.active) {
 			this.checkActive();
+			while (this.active) {
+				let response = await post('candidate-request', {id: this.id}).catch(petitionErrorHandler);
+				if (response)
+					this.connections.get(response.targetId)?.addIceCandidate(new RTCIceCandidate(response.candidate));
+				this.checkActive();
+			}
 		}
 	}
 }
