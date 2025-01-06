@@ -102,7 +102,7 @@ class Candidates {
 					let peerConnection = this.connections.get(response.targetId);
 					if (peerConnection) {
 						peerConnection.addIceCandidate(response.candidate);
-						if (!response.candidate) peerConnection.endOfCandidates = true;
+						if (!response.candidate?.candidate) peerConnection.endOfCandidates = true;
 					}
 				}
 				this.checkActive();
