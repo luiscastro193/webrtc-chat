@@ -1,5 +1,5 @@
 "use strict";
-import {host, connect} from './webrtc.js';
+import {Host, connect} from './webrtc.js';
 
 const createButton = document.getElementById('create-button');
 const joinButton = document.getElementById('join-button');
@@ -78,9 +78,10 @@ async function setAsHost() {
 	info.textContent = `Hosting room ${code}`;
 	
 	enableMessages();
+	const host = new Host(code);
 	
-	while (true) { try {
-		let [user, channel] = await host(code);
+	while (true) {
+		let [user, channel] = await host.nextChannel();
 		
 		if (user == myName)
 			user += " 2";
@@ -100,7 +101,7 @@ async function setAsHost() {
 			hostChannels.delete(user);
 			addMessage(`${user} has disconnected`);
 		});
-	} catch (e) {console.error(e);}}
+	}
 }
 
 async function connectToRoom() {
