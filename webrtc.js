@@ -117,7 +117,7 @@ export class Host {
 		const dataChannel = peerConnection.createDataChannel('data', {negotiated: true, id: 0});
 		dataChannel.addEventListener('close', () => peerConnection.close());
 		const channelPromise = waitForChannel(dataChannel);
-		await peerConnection.setRemoteDescription(new RTCSessionDescription(petition.offer));
+		await peerConnection.setRemoteDescription(petition.offer);
 		this.candidates.register(peerConnection, petition.id);
 		await peerConnection.setLocalDescription(await peerConnection.createAnswer());
 		sendCandidates(peerConnection, this.id, petition.id);
@@ -166,7 +166,7 @@ export async function connect(room, user) {
 	const channelPromise = waitForChannel(dataChannel);
 	sendCandidates(peerConnection, id, targetId);
 	let answer = await post('petition', {offer: peerConnection.localDescription, id, user, targetId});
-	await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+	await peerConnection.setRemoteDescription(answer);
 	new Candidates(id).register(peerConnection, targetId);
 	return channelPromise;
 }
