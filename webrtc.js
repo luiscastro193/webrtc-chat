@@ -40,6 +40,17 @@ async function post(path, data) {
 	return response.json();
 }
 
+function createDataChannel(peerConnection) {
+	const dataChannel = peerConnection.createDataChannel('data', {negotiated: true, id: 0});
+	const close = () => dataChannel.close();
+	window.addEventListener("beforeunload", close);
+	dataChannel.addEventListener('close', () => {
+		peerConnection.close();
+		window.removeEventListener("beforeunload", close);
+	});
+	return dataChannel;
+}
+
 async function waitForChannel(channel, peerConnection) {
 	let promise = new Promise((resolve, reject) => {
 		if (channel.readyState == 'open') return resolve(channel);
@@ -132,8 +143,7 @@ export class Host {
 	
 	async handleConnection(petition) {
 		const peerConnection = new RTCPeerConnection(await configuration);
-		const dataChannel = peerConnection.createDataChannel('data', {negotiated: true, id: 0});
-		dataChannel.addEventListener('close', () => peerConnection.close());
+		const dataChannel = createDataChannel(peerConnection);
 		const channelPromise = waitForChannel(dataChannel);
 		await peerConnection.setRemoteDescription(petition.offer);
 		this.candidates.register(peerConnection, petition.id);
@@ -176,8 +186,7 @@ export class Host {
 
 export async function connect(room, user) {
 	const peerConnection = new RTCPeerConnection(await configuration);
-	const dataChannel = peerConnection.createDataChannel('data', {negotiated: true, id: 0});
-	dataChannel.addEventListener('close', () => peerConnection.close());
+	const dataChannel = createDataChannel(peerConnection);
 	await peerConnection.setLocalDescription(await peerConnection.createOffer());
 	const id = crypto.randomUUID();
 	const targetId = await securePromise(() => post('id-request', {room})).then(response => response.id);
