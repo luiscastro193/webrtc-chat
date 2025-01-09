@@ -15,6 +15,15 @@
 }
 
 #message-form > [name=message] {
-	margin: 0 0.3em 0.3em 0;
+	margin: 0 .3em .3em 0;
 	flex: 1;
+}
+
+dialog > p {
+	margin-top: 0;
+}
+
+dialog button {
+	display: block;
+	margin: auto;
 }

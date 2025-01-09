@@ -6,12 +6,28 @@ const joinButton = document.getElementById('join-button');
 const nameForm = document.getElementById('name-form');
 const roomForm = document.getElementById('room-form');
 const info = document.getElementById('info');
+const shareButton = document.getElementById('share-button');
+const qrButton = document.getElementById('qr-button');
+const cancelButton = document.getElementById('cancel-button');
 const messages = document.getElementById('messages');
 const messageForm = document.getElementById('message-form');
+const dialog = document.querySelector('dialog');
+const dialogMsg = dialog.querySelector('p');
 
 const hostChannels = new Map();
 let myChannel;
+let code;
 let myName;
+
+let modalPromise = Promise.resolve();
+
+async function showModal(message) {
+	return modalPromise = modalPromise.then(() => new Promise(resolve => {
+		dialogMsg.textContent = message;
+		dialog.addEventListener('close', resolve, {once: true});
+		dialog.showModal();
+	}));
+}
 
 function setName() {
 	return new Promise(resolve => {
@@ -68,14 +84,36 @@ function enableMessages() {
 	messageForm.elements['message'].focus();
 }
 
+function connectURL() {
+	return new URL('#' + code, location.href);
+}
+
+shareButton.onclick = () => {
+	let url = connectURL();
+	
+	if (navigator.share)
+		navigator.share({url});
+	else
+		navigator.clipboard.writeText(url).then(() => showModal("Link copied to clipboard"));
+};
+
+qrButton.onclick = () => {
+	let url = "https://luiscastro193.github.io/qr-generator/#" + encodeURIComponent(connectURL());
+	window.open(url);
+}
+
+cancelButton.onclick = () => location.reload();
+
 async function setAsHost() {
 	createButton.disabled = true;
 	joinButton.disabled = true;
 	
 	await setName();
 	
-	const code = Math.trunc(Math.random() * 10000).toString().padStart(4, '0');
+	code = Math.trunc(Math.random() * 10000).toString().padStart(4, '0');
 	info.textContent = `Hosting room ${code}`;
+	shareButton.hidden = false;
+	qrButton.hidden = false;
 	
 	enableMessages();
 	const host = new Host(code);
@@ -108,9 +146,11 @@ async function connectToRoom() {
 	createButton.disabled = true;
 	joinButton.disabled = true;
 	
-	const code = await getCode();
+	if (!code) code = await getCode();
 	await setName();
 	info.textContent = `Connecting to room ${code}...`;
+	cancelButton.hidden = false;
+	
 	try {
 		myChannel = await connect(code, myName);
 	}
@@ -120,6 +160,7 @@ async function connectToRoom() {
 	}
 	myChannel.addEventListener('message', event => addMessage(event.data));
 	info.textContent = `Connected to room ${code}`;
+	cancelButton.hidden = true;
 	
 	myChannel.addEventListener('close', () => {
 		let msg = `Host has disconnected. Chat ended.`;
@@ -134,3 +175,11 @@ createButton.onclick = setAsHost;
 joinButton.onclick = connectToRoom;
 createButton.disabled = false;
 joinButton.disabled = false;
+
+if (location.hash) {
+	code = location.hash.slice(1);
+	history.replaceState(null, '', ' ');
+	connectToRoom();
+}
+
+window.onhashchange = () => location.reload();

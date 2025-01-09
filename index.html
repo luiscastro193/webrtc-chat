@@ -29,10 +29,17 @@
 		<input type="submit" value="Send">
 	</form>
 	<p id="info"></p>
+	<button id="share-button" hidden>Share</button>
+	<button id="qr-button" hidden>Generate QR</button>
+	<button id="cancel-button" hidden>Cancel</button>
 	<ul id="messages"></ul>
 	<form id="message-form" autocomplete="off" hidden>
 		<input name="message" type="text" onmouseenter="this.focus()" required>
 		<input type="submit" value="Send">
 	</form>
+	<dialog>
+		<p></p>
+		<form method="dialog"><button>OK</button></form>
+	</dialog>
 </body>
 </html>
