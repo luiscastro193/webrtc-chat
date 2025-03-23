@@ -2,6 +2,10 @@
 	font-family: InterVariable, sans-serif;
 }
 
+label > input {
+	max-width: 10em;
+}
+
 #messages {
 	padding: 0px;
 	list-style-position: inside;
