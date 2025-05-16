@@ -166,6 +166,7 @@ async function connectToRoom() {
 		let msg = `Host has disconnected. Chat ended.`;
 		addMessage(msg);
 		info.textContent = msg;
+		messageForm.elements['send'].disabled = true;
 	});
 		
 	enableMessages();
