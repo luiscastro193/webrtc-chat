@@ -63,6 +63,7 @@ function addMessage(msg) {
 	let li = document.createElement("li");
 	li.textContent = msg;
 	messages.appendChild(li);
+	messageForm.elements['message'].focus();
 	messageForm.scrollIntoView(false);
 }
 
