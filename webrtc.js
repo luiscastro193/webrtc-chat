@@ -185,13 +185,13 @@ export class Host {
 }
 
 export async function connect(room, user) {
-	const peerConnection = new RTCPeerConnection(await configuration);
-	const dataChannel = createDataChannel(peerConnection);
-	await peerConnection.setLocalDescription(await peerConnection.createOffer());
 	const id = crypto.randomUUID();
 	const targetId = await securePromise(() => post('id-request', {room})).then(response => response.id);
-	const channelPromise = waitForChannel(dataChannel);
+	const peerConnection = new RTCPeerConnection(await configuration);
 	sendCandidates(peerConnection, id, targetId);
+	const dataChannel = createDataChannel(peerConnection);
+	await peerConnection.setLocalDescription(await peerConnection.createOffer());
+	const channelPromise = waitForChannel(dataChannel);
 	let answer = await post('petition', {offer: peerConnection.localDescription, id, user, targetId});
 	await peerConnection.setRemoteDescription(answer);
 	new Candidates(id).register(peerConnection, targetId);
