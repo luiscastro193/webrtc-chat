@@ -1,6 +1,6 @@
 "use strict";
 const basePath = "https://luiscastro193.com/webrtc-signals/";
-const timeout = 15 * 1000;
+const timeout = 30 * 1000;
 
 async function request(resource, options) {
 	let response = await fetch(resource, options);
