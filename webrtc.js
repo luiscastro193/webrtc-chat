@@ -143,12 +143,12 @@ export class Host {
 	
 	async handleConnection(petition) {
 		const peerConnection = new RTCPeerConnection(await configuration);
+		sendCandidates(peerConnection, this.id, petition.id);
 		const dataChannel = createDataChannel(peerConnection);
 		const channelPromise = waitForChannel(dataChannel);
 		await peerConnection.setRemoteDescription(petition.offer);
 		this.candidates.register(peerConnection, petition.id);
 		await peerConnection.setLocalDescription(await peerConnection.createAnswer());
-		sendCandidates(peerConnection, this.id, petition.id);
 		await post('answer', {answer: peerConnection.localDescription, targetId: petition.id});
 		const channel = [petition.user, await channelPromise];
 		
